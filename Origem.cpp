@@ -72,17 +72,17 @@ int main() {
 		switch (opcao) {
 		case 1: // Inserir.
 			printf("\n======== Inserir registro ========\n");
-			InserirHash(CadastroHash);  // Insere os dados em uma posicao calculada pela função "FuncaoHashing".
+			InserirHash(CadastroHash); // Insere os dados em HashAlunos.
 			break;
 
 		case 2: // Remover
 			printf("\n======== Remover registro ========\n");
-			RemoverHash(CadastroHash);  // Remove os dados em uma posicao.
+			RemoverHash(CadastroHash); // Remove o registro em HashAlunos.
 			break;
 
 		case 3: // Buscar aluno pelo RU.
 			printf("\n======== Buscar aluno ========\n");
-			BuscarHash(CadastroHash);
+			BuscarHash(CadastroHash); // Busca o registro em HashAlunos.
 			break;
 
 		case 4: // Mostra todos os alunos do cadastro.
@@ -143,15 +143,18 @@ void CarregaDados(struct Cadastro* CadastroHash) {
 		for (int i = 0; i < TAMANHO_HASH; i++) {
 			NovoElemento = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
 
+			// Lê os dados do arquivo e armazena na struct HashAlunos.
 			fscanf_s(arq, "%d;%50[a-z A-Z];%s;", 
 				&NovoElemento->ru,
 				NovoElemento->nome_aluno, _countof(NovoElemento->nome_aluno),
 				NovoElemento->email, _countof(NovoElemento->email));
 
+			// Recebe a posição calculada pela função "FuncaoHashing".
 			pos = FuncaoHashing(NovoElemento->ru);
 
 			NovoElemento->prox = NULL;
 			NovoElemento->prox = CadastroHash->ListaAlunos[pos];
+			// Recebe o NovoElemento na posição calculada pela função "FuncaoHashing".
 			CadastroHash->ListaAlunos[pos] = NovoElemento;
 		}
 		fclose(arq);
@@ -189,7 +192,8 @@ void InserirHash(struct Cadastro* CadastroHash) {
 	scanf_s("%50s", NovoElemento->email, 51);
 	LimpaBuffer();
 
-	pos = FuncaoHashing(NovoElemento->ru); // Recebe a posição calculada pela função "FuncaoHashing".
+	// Recebe a posição calculada pela função "FuncaoHashing".
+	pos = FuncaoHashing(NovoElemento->ru); 
 	NovoElemento->prox = NULL; // Ponteiro para prox recebe NULL.
 	NovoElemento->prox = CadastroHash->ListaAlunos[pos]; // Aponta para o Head da lista.
 	CadastroHash->ListaAlunos[pos] = NovoElemento; // Transforma o Head em um novo elemento.
@@ -205,22 +209,26 @@ void RemoverHash(struct Cadastro* CadastroHash) {
 	printf("Digite o numero para ser removido: ");
 	scanf_s("%10d", &num);
 	LimpaBuffer();
-	pos = FuncaoHashing(num);
-	printf("\nRemovendo RU %d...\n", num);
 
-	// O bloco abaixo aloca um espaço na memória.
+	// Aplica a função para determinar em qual lista o registro foi alocado.
+	pos = FuncaoHashing(num);
+
+	// O bloco abaixo define um ponteiro e aloca espaço na memória.
 	HashAlunos* ElementoVarredura; 
 	ElementoVarredura = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
 	ElementoVarredura = CadastroHash->ListaAlunos[pos];
 
-	HashAlunos* Auxiliar;
+	HashAlunos* Auxiliar; // 
 	Auxiliar = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
 
+	// Se o elemento da lista é igual ao digitado exclui os dados referentes. 
 	if (CadastroHash->ListaAlunos[pos]->ru == num)
 	{
 		CadastroHash->ListaAlunos[pos] = CadastroHash->ListaAlunos[pos]->prox;
+		printf("\nRemovendo RU %d...\n", num);
 		free(ElementoVarredura);
 	}
+	// Senão passa para o proximo elemento e mantem o anterior. 
 	else
 	{
 		while (ElementoVarredura->ru != num)
@@ -257,7 +265,7 @@ void BuscarHash(struct Cadastro* CadastroHash) {
 
 	while (ElementoVarredura != NULL) {
 
-		// Se o elemento da lista é igual ao digitado e imprime as informações.
+		// Se o elemento da lista é igual ao digitado imprime as informações.
 		if (ElementoVarredura->ru == num) {
 			printf("\nResultado da busca: \n\n");
 			printf("RU:  %d \n", ElementoVarredura->ru);
@@ -271,7 +279,7 @@ void BuscarHash(struct Cadastro* CadastroHash) {
 			printf("Registro não encontrado! \n");
 			break;
 		}
-		// Se não aponta para o proximo elemento.
+		// Senão aponta para o proximo elemento.
 		else
 			ElementoVarredura = ElementoVarredura->prox;
 	}
