@@ -143,11 +143,11 @@ void CarregaDados(struct Cadastro* CadastroHash) {
 		for (int i = 0; i < TAMANHO_HASH; i++) {
 			NovoElemento = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
 
-			fscanf_s(arq, "%d;", &NovoElemento->ru);
-			fscanf_s(arq, "%50[a-z A-Z];",
-				NovoElemento->nome_aluno, _countof(NovoElemento->nome_aluno));
-			fscanf_s(arq, "%50s",
+			fscanf_s(arq, "%d;%50[a-z A-Z];%s;", 
+				&NovoElemento->ru,
+				NovoElemento->nome_aluno, _countof(NovoElemento->nome_aluno),
 				NovoElemento->email, _countof(NovoElemento->email));
+
 			pos = FuncaoHashing(NovoElemento->ru);
 
 			NovoElemento->prox = NULL;
@@ -242,34 +242,38 @@ void BuscarHash(struct Cadastro* CadastroHash) {
 	scanf_s("%d", &num);
 	LimpaBuffer();
 
-	pos = FuncaoHashing(num);
+	// Aplica a função para determinar em qual lista o registro foi alocado.
+	pos = FuncaoHashing(num); 
 
-	HashAlunos* ElementoVarredura;
+	HashAlunos* ElementoVarredura; // Cria um ponteiro do tipo HashAlunos.
 	ElementoVarredura = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
+	
+	// Recebe a lista na posição calculada pela FuncaoHasshing.
 	ElementoVarredura = CadastroHash->ListaAlunos[pos];
 
-	if (ElementoVarredura == NULL) {
+	if (ElementoVarredura == NULL) { // Verifica se a lista esta vazia.
 		printf("Registro não encontrado! \n");
 	}
 
 	while (ElementoVarredura != NULL) {
 
-		//if (ElementoVarredura == NULL) { printf("Registro não encontrado! \n"); ElementoVarredura = NULL; };
+		// Se o elemento da lista é igual ao digitado e imprime as informações.
 		if (ElementoVarredura->ru == num) {
 			printf("\nResultado da busca: \n\n");
 			printf("RU:  %d \n", ElementoVarredura->ru);
 			printf("NOME: %s \n", ElementoVarredura->nome_aluno);
 			printf("EMAIL: %s \n", ElementoVarredura->email);
 
-			ElementoVarredura = ElementoVarredura->prox;
+			ElementoVarredura = ElementoVarredura->prox; // Aponta para o proximo elemento.
 		}
+		// Se o elemento da lista for NULO imprime mensagem de erro.
 		else if (ElementoVarredura->prox == NULL) {
 			printf("Registro não encontrado! \n");
 			break;
 		}
+		// Se não aponta para o proximo elemento.
 		else
 			ElementoVarredura = ElementoVarredura->prox;
-
 	}
 }
 
