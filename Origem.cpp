@@ -19,7 +19,7 @@ FILE* arq;
 // Estrutura heterogênea de dados que armazena os dados do aluno.
 struct HashAlunos {
 	int ru;
-	char nome_aluno[51];
+	char nome[51];
 	char email[51];
 
 	// O ponteiro vai conter o endereço do próximo elemento.
@@ -111,14 +111,14 @@ int menu() {
 	/* Função usada para o menu da aplicação.*/
 	int opcao;
 	printf("______________________________________\n");
-	printf("\nMENU:\n");
-	printf("\n1 - Inserir novo registro.");
-	printf("\n2 - Remover registro.");
-	printf("\n3 - Buscar aluno pelo número do RU.");
-	printf("\n4 - Mostrar todos os registros.");
-	printf("\n\n0 - SAIR.\n");
+	printf("\n  MENU:\n");
+	printf("\n  1 - Inserir novo registro.");
+	printf("\n  2 - Remover registro.");
+	printf("\n  3 - Buscar aluno pelo número do RU.");
+	printf("\n  4 - Mostrar todos os registros.");
+	printf("\n\n  0 - SAIR.\n");
 
-	printf("\nDigite uma opção: ");
+	printf("\n  Digite uma opção: ");
 	scanf_s("%d", &opcao);
 	LimpaBuffer();
 	printf("______________________________________\n");
@@ -141,12 +141,13 @@ void CarregaDados(struct Cadastro* CadastroHash) {
 	if (err == 0) {
 
 		for (int i = 0; i < TAMANHO_HASH; i++) {
-			NovoElemento = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
+			NovoElemento = (struct HashAlunos*)
+				malloc(sizeof(struct HashAlunos));
 
 			// Lê os dados do arquivo e armazena na struct HashAlunos.
 			fscanf_s(arq, "%d;%50[a-z A-Z];%s;", 
 				&NovoElemento->ru,
-				NovoElemento->nome_aluno, _countof(NovoElemento->nome_aluno),
+				NovoElemento->nome, _countof(NovoElemento->nome),
 				NovoElemento->email, _countof(NovoElemento->email));
 
 			// Recebe a posição calculada pela função "FuncaoHashing".
@@ -154,7 +155,7 @@ void CarregaDados(struct Cadastro* CadastroHash) {
 
 			NovoElemento->prox = NULL;
 			NovoElemento->prox = CadastroHash->ListaAlunos[pos];
-			// Recebe o NovoElemento na posição calculada pela função "FuncaoHashing".
+			// Recebe o elemento na posição calculada pela "FuncaoHashing".
 			CadastroHash->ListaAlunos[pos] = NovoElemento;
 		}
 		fclose(arq);
@@ -185,7 +186,7 @@ void InserirHash(struct Cadastro* CadastroHash) {
 	LimpaBuffer();
 
 	printf("Digite o nome do aluno: ");
-	scanf_s("%50[a-z A-Z]", NovoElemento->nome_aluno, 51);
+	scanf_s("%50[a-z A-Z]", NovoElemento->nome, 51);
 	LimpaBuffer();
 
 	printf("Digite o e-mail do aluno: ");
@@ -194,9 +195,12 @@ void InserirHash(struct Cadastro* CadastroHash) {
 
 	// Recebe a posição calculada pela função "FuncaoHashing".
 	pos = FuncaoHashing(NovoElemento->ru); 
-	NovoElemento->prox = NULL; // Ponteiro para prox recebe NULL.
-	NovoElemento->prox = CadastroHash->ListaAlunos[pos]; // Aponta para o Head da lista.
-	CadastroHash->ListaAlunos[pos] = NovoElemento; // Transforma o Head em um novo elemento.
+	// Ponteiro para prox recebe NULL.
+	NovoElemento->prox = NULL; 
+	// Aponta para o Head da lista.
+	NovoElemento->prox = CadastroHash->ListaAlunos[pos]; 
+	// Transforma o Head em um novo elemento.
+	CadastroHash->ListaAlunos[pos] = NovoElemento; 
 }
 
 void RemoverHash(struct Cadastro* CadastroHash) {
@@ -256,7 +260,7 @@ void BuscarHash(struct Cadastro* CadastroHash) {
 	HashAlunos* ElementoVarredura; // Cria um ponteiro do tipo HashAlunos.
 	ElementoVarredura = (struct HashAlunos*)malloc(sizeof(struct HashAlunos));
 	
-	// Recebe a lista na posição calculada pela FuncaoHasshing.
+	// Recebe a lista na posição calculada pela FuncaoHashing.
 	ElementoVarredura = CadastroHash->ListaAlunos[pos];
 
 	if (ElementoVarredura == NULL) { // Verifica se a lista esta vazia.
@@ -269,10 +273,11 @@ void BuscarHash(struct Cadastro* CadastroHash) {
 		if (ElementoVarredura->ru == num) {
 			printf("\nResultado da busca: \n\n");
 			printf("RU:  %d \n", ElementoVarredura->ru);
-			printf("NOME: %s \n", ElementoVarredura->nome_aluno);
+			printf("NOME: %s \n", ElementoVarredura->nome);
 			printf("EMAIL: %s \n", ElementoVarredura->email);
 
-			ElementoVarredura = ElementoVarredura->prox; // Aponta para o proximo elemento.
+			// Aponta para o proximo elemento.
+			ElementoVarredura = ElementoVarredura->prox; 
 		}
 		// Se o elemento da lista for NULO imprime mensagem de erro.
 		else if (ElementoVarredura->prox == NULL) {
@@ -296,10 +301,9 @@ void MostrarHash(struct Cadastro* CadastroHash) {
 
 		while (ElementoVarredura != NULL) {
 			printf("| RU: %d ", ElementoVarredura->ru);
-			printf("| NOME: %s ", ElementoVarredura->nome_aluno);
+			printf("| NOME: %s ", ElementoVarredura->nome);
 			printf("| EMAIL: %s |\n", ElementoVarredura->email);
 			ElementoVarredura = ElementoVarredura->prox; 
 		}
-		printf("\n");
 	}
 }
